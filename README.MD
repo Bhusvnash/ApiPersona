@@ -25,16 +25,6 @@ API RESTful desarrollada en **.NET 10** con **ASP.NET Core** para la gestión y 
   - [Esquema de Base de Datos](#esquema-de-base-de-datos)
     - [Script MySQL](#script-mysql)
     - [Script SQL Server](#script-sql-server)
-  - [Guía de Migración: De MySQL a SQL Server](#guía-de-migración-de-mysql-a-sql-server)
-    - [1. ¿Cómo se PODRÍA cambiar? (Migración Directa / ADO.NET)](#1-cómo-se-podría-cambiar-migración-directa--adonet)
-      - [Paso 1.1: Crear la clase de servicio para SQL Server](#paso-11-crear-la-clase-de-servicio-para-sql-server)
-      - [Paso 1.2: Ajustar el Repositorio a los tipos de SQL Server](#paso-12-ajustar-el-repositorio-a-los-tipos-de-sql-server)
-    - [2. ¿Cómo se DEBERÍA cambiar? (Enfoque Profesional y Buenas Prácticas)](#2-cómo-se-debería-cambiar-enfoque-profesional-y-buenas-prácticas)
-      - [A. Inversión de Dependencias (Principio DIP - SOLID)](#a-inversión-de-dependencias-principio-dip---solid)
-      - [B. Gestión de Cadenas de Conexión en `appsettings.json`](#b-gestión-de-cadenas-de-conexión-en-appsettingsjson)
-      - [C. Inyección de Dependencias en `Program.cs`](#c-inyección-de-dependencias-en-programcs)
-      - [D. Operaciones Asíncronas (`async / await`)](#d-operaciones-asíncronas-async--await)
-      - [E. Alternativa con Micro-ORM (Dapper) o ORM (Entity Framework Core)](#e-alternativa-con-micro-orm-dapper-o-orm-entity-framework-core)
   - [Instalación y Ejecución Local](#instalación-y-ejecución-local)
     - [Prerrequisitos](#prerrequisitos)
     - [Pasos](#pasos)
@@ -57,12 +47,12 @@ API RESTful desarrollada en **.NET 10** con **ASP.NET Core** para la gestión y 
 
 ## Tecnologías y NuGets
 
-| Componente | Tecnología / Versión | Descripción |
-| :--- | :--- | :--- |
-| **Runtime / SDK** | `.NET 10.0` | Versión moderna del framework de Microsoft. |
-| **Framework Web** | `ASP.NET Core Web API` | Infraestructura HTTP basada en Controllers. |
-| **Lenguaje** | `C# 14 / C# Latest` | Tipado estático, tuplas, inicializadores y nullable types. |
-| **Base de Datos** | `MySQL / SQL Server` | Motores relacionales soportados (`db_personas`). |
+| Componente        | Tecnología / Versión   | Descripción                                                |
+| :---------------- | :--------------------- | :--------------------------------------------------------- |
+| **Runtime / SDK** | `.NET 10.0`            | Versión moderna del framework de Microsoft.                |
+| **Framework Web** | `ASP.NET Core Web API` | Infraestructura HTTP basada en Controllers.                |
+| **Lenguaje**      | `C# 14 / C# Latest`    | Tipado estático, tuplas, inicializadores y nullable types. |
+| **Base de Datos** | `MySQL / SQL Server`   | Motores relacionales soportados (`db_personas`).           |
 
 ### Dependencias Principales (NuGet Packages)
 
@@ -191,11 +181,11 @@ flowchart TD
 
 ## Endpoints de la API
 
-| Método | Ruta | Descripción | Códigos de Estado |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/persona` | Obtiene el listado completo de personas | `200 OK` |
-| `GET` | `/persona/{id}` | Obtiene una persona por su identificador | `200 OK`, `404 Not Found` |
-| `POST` | `/persona` | Registra una nueva persona en la base de datos | `201 Created`, `400 Bad Request` |
+| Método | Ruta            | Descripción                                    | Códigos de Estado                |
+| :----- | :-------------- | :--------------------------------------------- | :------------------------------- |
+| `GET`  | `/persona`      | Obtiene el listado completo de personas        | `200 OK`                         |
+| `GET`  | `/persona/{id}` | Obtiene una persona por su identificador       | `200 OK`, `404 Not Found`        |
+| `POST` | `/persona`      | Registra una nueva persona en la base de datos | `201 Created`, `400 Bad Request` |
 
 > La interfaz [IPersonaRepository.cs](ApiPersonas/Repositories/IPersonaRepository.cs) incluye los métodos `Update(Persona)` y `DeleteById(long id)`, los cuales pueden ser expuestos en el controlador añadiendo las acciones correspondientes (`[HttpPut]` y `[HttpDelete("{id}"]`).
 
@@ -265,137 +255,6 @@ CREATE TABLE personas (
 );
 GO
 ```
-
----
-
-## Guía de Migración: De MySQL a SQL Server
-
-El proyecto actualmente incluye la librería `Microsoft.Data.SqlClient` lista para usarse. A continuación se detallan las dos formas de realizar la migración.
-
----
-
-### 1. ¿Cómo se PODRÍA cambiar? (Migración Directa / ADO.NET)
-
-Este es el camino más directo para sustituir el motor sin cambiar la estructura existente de clases:
-
-#### Paso 1.1: Crear la clase de servicio para SQL Server
-Crear el archivo `services/sqlServerConnection.cs`:
-
-```csharp
-using Microsoft.Data.SqlClient;
-using System.Data;
-
-namespace ApiPersonas.services
-{
-    public class SqlServerConnection
-    {
-        public static readonly string connectionString = 
-            "Server=localhost;Database=db_personas;Trusted_Connection=True;TrustServerCertificate=True;";
-        public SqlConnection conn;
-
-        public SqlServerConnection()
-        {
-            conn = new SqlConnection(connectionString);
-            conn.Open();
-        }
-
-        public SqlConnection GetConnection()
-        {
-            if (conn.State != ConnectionState.Open)
-            {
-                conn.Open();
-            }
-            return conn;
-        }
-
-        public void CloseConnection()
-        {
-            conn.Close();
-        }
-    }
-}
-```
-
-#### Paso 1.2: Ajustar el Repositorio a los tipos de SQL Server
-En [SqlServerPersonaRepository.cs](ApiPersonas/Repositories/SqlServerPersonaRepository.cs):
-1. Usar `using Microsoft.Data.SqlClient;`.
-2. Reemplazar `MySqlCommand` por `SqlCommand` y `MySqlDataReader` por `SqlDataReader`.
-3. **Diferencia Crítica en la inserción (Obtención de ID generado):**
-   - En MySQL se utiliza `cmd.LastInsertedId`.
-   - En SQL Server se utiliza la cláusula `OUTPUT INSERTED.id` o `SELECT SCOPE_IDENTITY();`:
-
-```csharp
-public (bool, long) Create(Persona persona)
-{
-    var sql = new SqlServerConnection();
-    try
-    {
-        // Uso de OUTPUT INSERTED.id para recuperar el ID generado en SQL Server
-        string query = "INSERT INTO personas (nombre, telefono) OUTPUT INSERTED.id VALUES (@nombre, @telefono)";
-        using (var cmd = new SqlCommand(query, sql.conn))
-        {
-            cmd.Parameters.AddWithValue("@nombre", persona.Nombre);
-            cmd.Parameters.AddWithValue("@telefono", (object?)persona.Telefono ?? DBNull.Value);
-            
-            long newId = Convert.ToInt64(cmd.ExecuteScalar());
-            return (newId > 0, newId);
-        }
-    }
-    finally
-    {
-        sql.CloseConnection();
-    }
-}
-```
-
----
-
-### 2. ¿Cómo se DEBERÍA cambiar? (Enfoque Profesional y Buenas Prácticas)
-
-Para un proyecto mantenible, escalable y con arquitectura limpia, se recomienda aplicar los siguientes patrones:
-
-#### A. Inversión de Dependencias (Principio DIP - SOLID)
-Desacoplar los controladores y repositorios mediante una interfaz:
-
-```csharp
-// Repositories/IPersonaRepository.cs
-public interface IPersonaRepository
-{
-    List<Persona> GetAll();
-    Persona? GetById(long id);
-    (bool success, long id) Create(Persona persona);
-    bool Update(Persona persona);
-    bool DeleteById(long id);
-}
-```
-
-#### B. Gestión de Cadenas de Conexión en `appsettings.json`
-Evitar cadenas de conexión quemadas en código fuente (*hardcoded*):
-
-```json
-{
-  "ConnectionStrings": {
-    "SqlServerConnection": "Server=localhost;Database=db_personas;Trusted_Connection=True;TrustServerCertificate=True;",
-    "MySqlConnection": "Server=localhost;Database=db_personas;User=root;Password=;"
-  }
-}
-```
-
-#### C. Inyección de Dependencias en `Program.cs`
-Registrar la conexión o repositorio en el contenedor de IoC de ASP.NET Core:
-
-```csharp
-// Program.cs
-builder.Services.AddSingleton<IPersonaRepository, SqlServerPersonaRepository>();
-```
-
-#### D. Operaciones Asíncronas (`async / await`)
-Reemplazar llamadas bloqueantes (`cmd.ExecuteReader()`) por sus equivalentes no bloqueantes (`await cmd.ExecuteReaderAsync()`) para liberar hilos del ThreadPool y soportar alta concurrencia.
-
-#### E. Alternativa con Micro-ORM (Dapper) o ORM (Entity Framework Core)
-Para cambiar de motor de forma transparente sin reescribir consultas ADO.NET manuales:
-- **Dapper:** Funciona sobre la abstracción `IDbConnection` (`SqlConnection` o `MySqlConnection`).
-- **EF Core:** Cambiar entre `UseSqlServer(...)` y `UseMySql(...)` mediante un solo cambio de proveedor en `Program.cs`.
 
 ---
 
