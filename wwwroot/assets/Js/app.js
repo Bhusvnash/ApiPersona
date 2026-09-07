@@ -21,9 +21,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 btnNew.addEventListener("click", () => {
   modal.modalTitle.textContent = "Agregar Persona"
-  
-
-
   modal.instance.show()
 
 })

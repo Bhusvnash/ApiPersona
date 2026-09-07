@@ -45,7 +45,6 @@ C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\bin\Debug\net10.0\
 C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\bin\Debug\net10.0\runtimes\win\lib\net10.0\System.Windows.Extensions.dll
 C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\obj\Debug\net10.0\ApiPersonas.csproj.AssemblyReference.cache
 C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\obj\Debug\net10.0\ApiPerso.58CCD823.Up2Date
-C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
 C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\bin\Debug\net10.0\Microsoft.Bcl.Cryptography.dll
 C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\bin\Debug\net10.0\Microsoft.Data.SqlClient.dll
 C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\bin\Debug\net10.0\Microsoft.Data.SqlClient.Extensions.Abstractions.dll
@@ -76,3 +75,10 @@ C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\bin\Debug\net10.0\
 C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\bin\Debug\net10.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\bin\Debug\net10.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\bin\Debug\net10.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\bin\Debug\net10.0\ApiPersonas.staticwebassets.runtime.json
+C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\obj\Debug\net10.0\ApiPersonas.sourcelink.json
+C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\obj\Debug\net10.0\compressed\1nw1erkv83-{0}-lsk7gk49fj-lsk7gk49fj.gz
+C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\obj\Debug\net10.0\compressed\387t8xafi8-{0}-5ipweew5fc-5ipweew5fc.gz
+C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\obj\Debug\net10.0\compressed\yxmoa4ruhn-{0}-cmm6yhxjbs-cmm6yhxjbs.gz
+C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\obj\Debug\net10.0\compressed\i7346v1a2v-{0}-j1agcae3ir-j1agcae3ir.gz
+C:\Users\Bhusvnash\Documents\Programacion\C#\Apis\ApiPersonas\obj\Debug\net10.0\compressed\s7544fu8g9-{0}-7ccn2eembn-7ccn2eembn.gz
