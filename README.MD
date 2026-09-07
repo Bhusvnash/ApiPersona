@@ -1,4 +1,4 @@
-# ApiPersonas - RESTful Web API
+# ApiPersonas - REST
 
 API RESTful desarrollada en **.NET 10** con **ASP.NET Core** para la gestión y administración del ciclo de vida de registros de personas (`Persona`). El proyecto implementa una arquitectura por capas con el patrón Repository y acceso a datos relacionales mediante ADO.NET.
 
