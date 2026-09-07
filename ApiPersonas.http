@@ -1,0 +1,19 @@
+@ApiPersonas_HostAddress = http://localhost:5099
+
+get {{ApiPersonas_HostAddress}}/persona
+Accept: application/json
+###
+
+get {{ApiPersonas_HostAddress}}/persona/1
+Accept: application/json
+### 
+
+post "{{ApiPersonas_HostAddress}}/persona"
+Content-Type: application/json
+{
+  "nombre": "Kevin Gracia",
+  "telefono": "1234567890"
+}
+###
+
+
