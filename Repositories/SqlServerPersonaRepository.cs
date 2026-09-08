@@ -106,7 +106,7 @@ namespace ApiPersonas.Repositories
 						var sqlServer = new sqlServerConnection();
 						try
 						{
-								string query = "UPDATE personas SET nombre = @nombre , telefono =@telefono  WHERE od = @id;";
+								string query = "UPDATE personas SET nombre = @nombre , telefono =@telefono  WHERE id = @id;";
 								using (var cmd = new SqlCommand(query, sqlServer.conn))
 								{
 										cmd.Parameters.AddWithValue("@nombre", persona.Nombre);

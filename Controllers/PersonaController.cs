@@ -5,6 +5,7 @@ using ApiPersonas.Repositories;
 using ApiPersonas;
 using System.IO;
 using System;
+using System.Security.AccessControl;
 
 namespace ApiPersonas.Controllers
 {
@@ -13,10 +14,16 @@ namespace ApiPersonas.Controllers
 		public class PersonaController : ControllerBase
 		{
 				//	private static SqlServerPersonaRepository repository = new SqlServerPersonaRepository();
-				private static MysqlPersonaRepository repository = new MysqlPersonaRepository();
+				private readonly  IPersonaRepository _repository;
+
+				//constructor de PersonaController requiere repository
+				public PersonaController(IPersonaRepository repository)
+				{
+						_repository = repository;
+				}
 
 				[HttpGet("/")] // GET /
-				public IActionResult index()
+				public IActionResult Index()
 				{
 						var ruta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html");
 						if (!System.IO.File.Exists(ruta))
@@ -25,28 +32,25 @@ namespace ApiPersonas.Controllers
 						}
 						return PhysicalFile(ruta, "text/html");
 				}
-
 				[HttpGet] // GET /persona/
 				public IActionResult GetAll()
 				{
-						return Ok(repository.GetAll());
+						return Ok(_repository.GetAll());
 				}
-
 				[HttpGet("{id}")] // GET /persona/{id}
 				public IActionResult GetById(long id)
 				{
-						var persona = repository.GetById(id);
+						var persona = _repository.GetById(id);
 						if (persona is null)
 						{
 								return NotFound();
 						}
 						return Ok(persona);
 				}
-
 				[HttpPost] //post /persona/
 				public IActionResult Create([FromBody] Persona persona)
 				{
-						var (success, id) = repository.Create(persona);
+						var (success, id) = _repository.Create(persona);
 						if (!success)
 						{
 								return BadRequest();
@@ -54,7 +58,6 @@ namespace ApiPersonas.Controllers
 						persona.Id = id;
 						return CreatedAtAction(nameof(GetById), new { id = id }, persona);
 				}
-
 				[HttpPut("{id}")] // PUT /persona/{id}
 				public IActionResult Update(long id, [FromBody] Persona persona)
 				{
@@ -62,8 +65,17 @@ namespace ApiPersonas.Controllers
 						{
 								return BadRequest();
 						}
-						var result = repository.Update(persona);
+						var result = _repository.Update(persona);
 						if (!result)
+						{
+								return NotFound();
+						}
+						return NoContent();
+				}
+				[HttpDelete("{id}")] // DELETE /persona/{id}
+				public IActionResult Delete(long id)
+				{
+						if (!_repository.DeleteById(id))
 						{
 								return NotFound();
 						}
