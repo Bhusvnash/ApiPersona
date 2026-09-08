@@ -1,162 +1,111 @@
 <!doctype html>
 <html lang="es" data-bs-theme="dark">
-  <head>
-    <title>API Personas</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="./assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="./assets/css/style.css" />
-  </head>
 
-  <body>
-    <!-- [titulo] -->
-    <header
-      class="py-4 mb-4 border-bottom border-secondary-subtle bg-body-tertiary"
-    >
-      <div
-        class="container-fluid container-lg d-flex align-items-center justify-content-between"
-      >
-        <div>
-          <h1 class="h3 mb-1 fw-bold text-primary">Api personas</h1>
-          <small class="text-body-secondary fs-6"
-            >GUI para text endpoints apiPersonas</small
-          >
-        </div>
+<head>
+  <title>API Personas</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />    
+  <link rel="stylesheet" href="./assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
+</head>
+
+<body>
+  <!-- [titulo] -->
+  <header class="py-4 mb-4 border-bottom border-secondary-subtle bg-body-tertiary">
+    <div class="container-fluid container-lg d-flex align-items-center justify-content-between">
+      <div>
+        <h1 class="h3 mb-1 fw-bold text-primary">Api personas</h1>
+        <small class="text-body-secondary fs-6">GUI para text endpoints apiPersonas</small>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <main>
-      <div class="container-fluid container-lg">
-        <!-- [opciones] -->
-        <div
-          class="card bg-body-tertiary border-secondary-subtle mb-4 shadow-sm"
-        >
-          <div class="card-body">
-            <div class="row g-3 align-items-center justify-content-between">
-              <div class="col-12 col-md-auto">
-                <button
-                  id="btnNew"
-                  class="btn btn-primary px-4 fw-semibold shadow-sm d-flex align-items-center gap-2"
-                >
-                  + Agregar
-                </button>
-              </div>
-              <div class="col-12 col-md-4">
-                <div class="input-group">
-                  <span
-                    class="input-group-text bg-body border-secondary-subtle text-secondary fw-semibold"
-                    >ID</span
-                  >
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="inputFilter"
-                    placeholder="Filtrar por ID"
-                  />
-                </div>
-              </div>
+  <main>
+    <div class="container-fluid container-lg">
+      <!-- [opciones] -->
+      <div class="card bg-body-tertiary border-secondary-subtle mb-4 shadow-sm">
+        <div class="card-body">
+          <div class="row g-3 align-items-center justify-content-between">
+            <div class="col-12 col-md-auto">
+              <button id="btnNew" class="btn btn-primary px-4 fw-semibold shadow-sm d-flex align-items-center gap-2">
+                + Agregar
+              </button>
             </div>
-          </div>
-        </div>
-
-        <!-- [tabla] -->
-        <div class="row justify-content-center">
-          <div class="col-12">
-            <div class="card border-secondary-subtle shadow-sm overflow-hidden">
-              <div class="table-responsive">
-                <table class="table text-center table-dark align-middle mb-0">
-                  <thead>
-                    <tr>
-                      <th scope="col" class="py-3">ID</th>
-                      <th scope="col" class="py-3">Nombre</th>
-                      <th scope="col" class="py-3">Telefono</th>
-                      <th scope="col" class="py-3">Editar Eliminar</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tabla">
-                    <tr>
-                      <td scope="row">1</td>
-                      <td>Name</td>
-                      <td>321 4323 654</td>
-                      <td>
-                        <button idEdit="1" class="btn btn-sm m-1 btn-success">
-                          Edit
-                        </button>
-                        <button idDelete="1" class="btn btn-sm m-1 btn-danger">
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+            <div class="col-12 col-md-4">
+              <div class="input-group">
+                <span class="input-group-text bg-body border-secondary-subtle text-secondary fw-semibold">ID</span>
+                <input type="text" class="form-control" id="inputFilter" placeholder="Filtrar por ID" />
               </div>
             </div>
           </div>
         </div>
       </div>
-    </main>
 
-    <footer class="m-5">
-      <form autocomplete="on">
-        <div class="mb-3">
-          <label for="#inputbna" class="form-label">Nombre</label>
-          <input
-            type="text"
-            class="form-control"
-            id="inputName"
-            placeholder="Jaun Perez"
-          />
-        </div>
-        <div class="mb-3">
-          <label for="" class="form-label">Telefono</label>
-          <input
-            type="number"
-            class="form-control"
-            id="inputName"
-            placeholder="Jaun Perez"
-          />
-        </div>
-      </form>
-    </footer>
-
-    <!-- [modal] -->
-    <div
-      class="modal fade"
-      id="personModal"
-      tabindex="-1"
-      aria-labelledby="modalTitle"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="modalTitle">Modal title</h1>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div id="modalBody" class="modal-body">...</div>
-          <div id="modalFooter" class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <!-- Nota : Cundo m.show add.btnSave("set-data-roll") donde roll= lo que hace (CRUD) -->
-            <button type="button" class="btn btn-primary" id="btnSave">
-              Save changes
-            </button>
+      <!-- [tabla] -->
+      <div class="row justify-content-center">
+        <div class="col-12">
+          <div class="card border-secondary-subtle shadow-sm overflow-hidden">
+            <div class="table-responsive">
+              <table class="table text-center table-dark align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th scope="col" class="py-3">ID</th>
+                    <th scope="col" class="py-3">Nombre</th>
+                    <th scope="col" class="py-3">Telefono</th>
+                    <th scope="col" class="py-3">Editar Eliminar</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla">
+                  <tr>
+                    <td scope="row">1</td>
+                    <td>Name</td>
+                    <td>321 4323 654</td>
+                    <td>
+                      <button idEdit="1" class="btn btn-sm m-1 btn-success">
+                        Edit
+                      </button>
+                      <button idDelete="1" class="btn btn-sm m-1 btn-danger">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  </main>
 
-    <script src="./assets/js/bootstrap.bundle.min.js"></script>
-    <script src="./assets/Js/app.js" defer></script>
-  </body>
+  <footer class="m-5">
+  </footer>
+
+  <!-- [modal] -->
+  <div class="modal fade" id="personModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalTitle">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="modalBody" class="modal-body">...</div>
+        <div id="modalFooter" class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+          <!-- Nota : Cundo m.show add.btnSave("set-data-roll") donde roll= lo que hace (CRUD) -->
+          <button type="button" class="btn btn-primary" id="btnSave">
+            Save changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./assets/js/bootstrap.bundle.min.js"></script>
+  <script src="./assets/Js/app.js" defer></script>
+  <script src="./assets/Js/crud.js" defer></script>
+</body>
+
 </html>
