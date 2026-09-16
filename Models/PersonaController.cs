@@ -9,13 +9,17 @@ using System.Security.AccessControl;
 
 namespace ApiPersonas.Controllers
 {
+		
+
 		[ApiController]
 		[Route("[controller]")]
+
+		// peticon = new controller persona (res,req,irepository)   /persona 
+		
 		public class PersonaController : ControllerBase
 		{
 				//	private static SqlServerPersonaRepository repository = new SqlServerPersonaRepository();
 				private readonly  IPersonaRepository _repository;
-
 				//constructor de PersonaController requiere repository
 				public PersonaController(IPersonaRepository repository)
 				{
@@ -23,6 +27,7 @@ namespace ApiPersonas.Controllers
 				}
 
 				[HttpGet("/")] // GET /
+		
 				public IActionResult Index()
 				{
 						var ruta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html");
@@ -32,7 +37,7 @@ namespace ApiPersonas.Controllers
 						}
 						return PhysicalFile(ruta, "text/html");
 				}
-				[HttpGet] // GET /persona/
+				[HttpGet] // GET /persona 
 				public IActionResult GetAll()
 				{
 						return Ok(_repository.GetAll());

@@ -61,7 +61,6 @@ namespace ApiPersonas.Repositories
 										var reader = cmd.ExecuteReader();
 										while (reader.Read())
 										{
-												
 												persona = new Persona(
 
 														reader.GetInt64("id"),
@@ -77,6 +76,7 @@ namespace ApiPersonas.Repositories
 						}
 						return persona;
 				}
+
 				/// <summary>
 				/// inserta una Persona  en la db
 				/// </summary>
@@ -101,6 +101,7 @@ namespace ApiPersonas.Repositories
 								sqlServer.ConnectionClose();
 						}
 				}
+
 				public bool Update(Persona persona)
 				{
 						var sqlServer = new sqlServerConnection();
@@ -119,6 +120,7 @@ namespace ApiPersonas.Repositories
 								sqlServer.ConnectionClose();
 						}
 				}
+
 				public bool DeleteById(long id)
 				{
 						var sqlServer = new sqlServerConnection();

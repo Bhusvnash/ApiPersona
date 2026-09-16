@@ -1,111 +1,109 @@
 // ==========================================
 // ESTADO GLOBAL Y VARIABLES
 // ==========================================
-let litaContactos = [];
+let listaPersonas = [];
 
-// ==========================================
 // ELEMENTOS DEL DOM
-// ==========================================
-// Seccion [Opciones]
-const btnNew = document.querySelector("#btnNew"); // Boton para agregar persona
-const inputFilter = document.querySelector("#inputFilter"); // Input para filtrar por ID
-
-// Seccion [Tabla]
-const tabla = document.querySelector("#tabla"); // Cuerpo de la tabla de personas
-
-// Seccion [Modal]
-const btnSave = document.querySelector("#btnSave"); // Boton para guardar cambios en el modal
-
+const btnNew = document.querySelector("#btnNew");
+const inputFilter = document.querySelector("#inputFilter");
+const tabla = document.querySelector("#tabla");
 const modal = {
   instance: null,
-  id: document.querySelector("#personModal"), // Modal principal
-  titulo: document.querySelector("#modalTitle"), // Titulo del modal
-  body: document.querySelector("#modalBody"), // Cuerpo del modal
-  footer: document.querySelector("#modalFooter"), // Pie del modal
+  element: document.querySelector('#personModal'),
+  titulo: document.querySelector('#modalTitle'),
+  body: document.querySelector("#modalBody"),
+  footer: document.querySelector("#modalFooter"),
+  //metodos
   clear: () => {
-    modal.titulo.textContent = "";
-    modal.body.innerHTML = "";
-    // Optimizacion: Correccion de error tipografico en la etiqueta button
-    modal.footer.innerHTML = `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>`;
+    modal.titulo.textContent = ``
+    modal.body.innerHTML = ``
+    modal.footer.innerHTML = `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>`
+  },
+  make: () => {
+    if (!modal.instance) {
+      modal.instance = new bootstrap.Modal(modal.element)
+    }
+  },
+  show: () => {
+    modal.instance.show()
+  },
+  hide: () => {
+    modal.instance.hide()
   }
-};
+}
+function modalNuevaPersona() {
 
-
-// ==========================================
-// EVENTOS
-// ==========================================
-window.addEventListener('DOMContentLoaded', async () => {
-  modal.instance = new bootstrap.Modal(modal.id);
-  litaContactos = await getAll();
-});
-
-btnNew.addEventListener("click", () => {
   modal.clear();
   modal.titulo.textContent = "Agregar Persona";
-
-  // Crear formulario
-  const form = document.createElement("form");
-  form.setAttribute("autocomplete", "on");
-
-  const divName = crearInput({ id: "inputNombre", label: "Nombre" });
-  const divTelefono = crearInput({ id: "inputTelefono", label: "Telefono", type: "number" });
-
-  // Optimizacion: uso de append para multiples nodos
-  form.append(divName, divTelefono);
+  //make form using doom
+  const form = document.createElement('form');
+  //crearInput({ id, label, type = "text" }
+  const divNombre = crearInput({ id: "inputNombre", label: "Nombre" })
+  const divTelefono = crearInput({ id: "inputTelefono", label: "Telefono", type: 'tel' })
+  form.appendChild(divNombre)
+  form.appendChild(divTelefono)
+  //buttons 
+  const btnSave = crearButton({ id: '', text: 'Guardar', accion: 'agregarContacto' })
   modal.body.appendChild(form);
-
-  // Footer
-  const btnSubmit = document.createElement("button");
-  btnSubmit.setAttribute("type", "submit");
-  btnSubmit.classList.add("btn", "btn-primary", "nuevoContacto");
-  btnSubmit.textContent = "Guardar";
-
-  modal.footer.appendChild(btnSubmit);
-  modal.instance.show();
-});
-
-modal.footer.addEventListener("click", async (e) => {
-  if (e.target.classList.contains("nuevoContacto")) {
-    e.preventDefault();
-    const data = {
-      nombre: document.getElementById("inputNombre").value,
-      telefono: document.getElementById("inputTelefono").value
-    };
-  }
-});
-
+  modal.footer.appendChild(btnSave);
+  modal.show();
+}
 
 // ==========================================
 // FUNCIONES RECURSIVAS Y GENERALES
 // ==========================================
-
-// Cargar tabla
-async function cargar() {
-  litaContactos = await getAll();
-  tabla.innerHTML = "";
-
-  // Optimizacion: Uso de DocumentFragment para evitar multiples reflows del DOM
-  const fragment = document.createDocumentFragment();
-
-  litaContactos.forEach(contacto => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-  <td>${contacto.id}</td>
-  <td>${contacto.nombre}</td>
-  <td>${contacto.telefono}</td>
-  <td><button class="btn btn-primary" data-edit="${contacto.id}">Editar</button></td>
-  <td><button class="btn btn-danger" data-delete="${contacto.id}">Eliminar</button></td>
-  `;
-    fragment.appendChild(tr);
-  });
-
-  tabla.appendChild(fragment);
+function crearFila(personas = listaPersonas) {
+  if (personas.length === 0) {
+    console.log(personas); return
+  }
+  personas.forEach(person => {
+    const tr = document.createElement('tr')
+    //
+    const tdId = document.createElement("td");
+    const tdNombre = document.createElement("td");
+    const tdTelefono = document.createElement("td");
+    const tdAcciones = document.createElement("td");
+    //editar,eliminar
+    //txt
+    tdId.textContent = person.id
+    tdNombre.textContent = person.nombre
+    tdTelefono.textContent = person.telefono
+    //
+    const btnEliminar = crearButton({
+      id: "btnEliminar",
+      text: "Eliminar",
+      accion: "eliminar",
+      color: "btn-danger"
+    });
+    const btnEditar = crearButton({
+      id: "btnEditar",
+      text: "Editar",
+      accion: "editar",
+      color: "btn-success"
+    });
+    btnEliminar.setAttribute('data-id', person.id);
+    btnEditar.setAttribute('data-id', person.id);
+    //
+    tdAcciones.append(btnEditar, btnEliminar);
+    tr.appendChild(tdId);
+    tr.appendChild(tdNombre);
+    tr.appendChild(tdTelefono);
+    tr.appendChild(tdAcciones);
+    tabla.appendChild(tr);
+  })
 }
-
+function crearButton({ id, text, accion, color }) {
+  color = color ?? "btn-primary";
+  const button = document.createElement("button");
+  button.classList.add(color, accion, 'btn', 'm-1');
+  button.textContent = text;
+  button.id = id
+  //text : crearButton({id:btn,text:"texto",accion:"test",color:"btn-warnig"});
+  return button
+}
 function crearInput({ id, label, type = "text" }) {
   const div = document.createElement("div");
   div.classList.add("mb-3");
-
   const labelElement = document.createElement("label");
   labelElement.setAttribute("for", id);
   labelElement.classList.add("form-label");
@@ -119,3 +117,4 @@ function crearInput({ id, label, type = "text" }) {
   div.append(labelElement, input);
   return div;
 }
+

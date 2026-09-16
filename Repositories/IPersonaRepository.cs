@@ -11,7 +11,7 @@ namespace ApiPersonas.Repositories
 				public (bool, long) Create(Persona persona);
 
 				public bool Update(Persona persona);
-
+				
 				public bool DeleteById(long id);
 		}
 }
