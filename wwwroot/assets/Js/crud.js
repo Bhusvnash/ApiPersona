@@ -1,98 +1,100 @@
-//api rest
-const url = "http://localhost:5099/Persona"
-//arreglo tem para test
-let JsonData = `
-[
-    {
-        "id": 1,
-        "nombre": "Juan Perez",
-        "telefono": "3001234567"
-    },
-    {
-        "id": 2,
-        "nombre": "Maria Gomez",
-        "telefono": "3012345678"
-    },
-    {
-        "id": 3,
-        "nombre": "Carlos Ramirez",
-        "telefono": "3103456789"
-    },
-    {
-        "id": 4,
-        "nombre": "Laura Martinez",
-        "telefono": "3154567890"
-    },
-    {
-        "id": 5,
-        "nombre": "Andres Rodriguez",
-        "telefono": "3205678901"
-    },
-    {
-        "id": 6,
-        "nombre": "Pedro Lopez",
-        "telefono": "3001112233"
-    },
-    {
-        "id": 7,
-        "nombre": "John Doe",
-        "telefono": "123456789"
-    },
-    {
-        "id": 8,
-        "nombre": "John Doe",
-        "telefono": "123456789"
-    }
-]
-`
-const sendData = () => {
-  return JSON.parse(JsonData)
-} 
-async function getAll() {
+// ==========================================
+// CRUD - Comunicación con la API REST (/Persona)
+// Responsabilidad: Peticiones HTTP con rutas relativas
+// ==========================================
+
+const API_URL = "/Persona";
+
+/**
+ * Obtiene la lista completa de personas
+ * @returns {Promise<Array>}
+ */
+async function apiGetAll() {
   try {
-    //liena temporar: 
-    return sendData();
-    const response = await fetch(url)
-    const data = await response.json()
-    return data
+    const response = await fetch(API_URL);
+    if (!response.ok) throw new Error(`Error en la petición: ${response.status}`);
+    return await response.json();
   } catch (error) {
-    console.log(error)
+    console.error("Error al obtener personas:", error);
+    throw error;
   }
 }
 
-async function getById(id) {
+/**
+ * Obtiene una persona específica por su ID
+ * @param {number|string} id 
+ * @returns {Promise<Object>}
+ */
+async function apiGetById(id) {
   try {
-    const response = await fetch(`${url}/${id}`)
-    const data = await response.json()
-    return data
+    const response = await fetch(`${API_URL}/${id}`);
+    if (!response.ok) throw new Error(`Error al obtener ID ${id}: ${response.status}`);
+    return await response.json();
   } catch (error) {
-    console.log(error)
+    console.error(`Error al obtener persona ${id}:`, error);
+    throw error;
   }
 }
-async function create(persona) {
+
+/**
+ * Crea una nueva persona en la base de datos
+ * @param {Object} persona { nombre, telefono }
+ * @returns {Promise<Object>}
+ */
+async function apiCreate(persona) {
   try {
-    const response = await fetch(url, {
-      "method": "Delete",
-      "headers": { "Content - Type": "application/json" },
-      "body": JSON.stringify(persona)
-    })
-    const data = await response.json()
-    return data
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json" 
+      },
+      body: JSON.stringify(persona)
+    });
+    if (!response.ok) throw new Error(`Error al crear persona: ${response.status}`);
+    return await response.json();
   } catch (error) {
-    console.log(error)
+    console.error("Error al crear persona:", error);
+    throw error;
   }
 }
-//PUT /persona/{id}
-async function update(id, persona) {
+
+/**
+ * Actualiza los datos de una persona existente
+ * @param {number|string} id 
+ * @param {Object} persona { id, nombre, telefono }
+ * @returns {Promise<boolean>}
+ */
+async function apiUpdate(id, persona) {
   try {
-    const response = await fetch(`${url}/${id}`, {
-      "method": "PUT",
-      "headers": { "Content - Type": "application/json" },
-      "body": JSON.stringify(persona)
-    })
-    const data = await response.json()
-    return data
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "PUT",
+      headers: { 
+        "Content-Type": "application/json" 
+      },
+      body: JSON.stringify(persona)
+    });
+    if (!response.ok) throw new Error(`Error al actualizar persona ${id}: ${response.status}`);
+    return true;
   } catch (error) {
-    console.log(error)
+    console.error(`Error al actualizar persona ${id}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Elimina una persona por su ID
+ * @param {number|string} id 
+ * @returns {Promise<boolean>}
+ */
+async function apiDeleteById(id) {
+  try {
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "DELETE"
+    });
+    if (!response.ok) throw new Error(`Error al eliminar persona ${id}: ${response.status}`);
+    return true;
+  } catch (error) {
+    console.error(`Error al eliminar persona ${id}:`, error);
+    throw error;
   }
 }

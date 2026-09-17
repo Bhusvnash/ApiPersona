@@ -1,17 +1,19 @@
-﻿using ApiPersonas.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using ApiPersonas.Models;
 
 namespace ApiPersonas.Repositories
 {
 		public interface IPersonaRepository
 		{
-				public List<Persona> GetAll();
+				public Task<List<Persona>> GetAllAsync();
 
-				public Persona? GetById(long id);
+				public Task<Persona?> GetByIdAsync(long id);
 
-				public (bool, long) Create(Persona persona);
+				public Task<(bool, long)> CreateAsync(Persona persona);
 
-				public bool Update(Persona persona);
+				public Task<bool> UpdateAsync(Persona persona);
 				
-				public bool DeleteById(long id);
+				public Task<bool> DeleteByIdAsync(long id);
 		}
 }

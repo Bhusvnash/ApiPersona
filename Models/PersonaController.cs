@@ -2,32 +2,23 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ApiPersonas.Models;
 using ApiPersonas.Repositories;
-using ApiPersonas;
 using System.IO;
-using System;
-using System.Security.AccessControl;
+using System.Threading.Tasks;
 
 namespace ApiPersonas.Controllers
 {
-		
-
 		[ApiController]
 		[Route("[controller]")]
-
-		// peticon = new controller persona (res,req,irepository)   /persona 
-		
 		public class PersonaController : ControllerBase
 		{
-				//	private static SqlServerPersonaRepository repository = new SqlServerPersonaRepository();
-				private readonly  IPersonaRepository _repository;
-				//constructor de PersonaController requiere repository
+				private readonly IPersonaRepository _repository;
+
 				public PersonaController(IPersonaRepository repository)
 				{
 						_repository = repository;
 				}
 
 				[HttpGet("/")] // GET /
-		
 				public IActionResult Index()
 				{
 						var ruta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html");
@@ -37,25 +28,29 @@ namespace ApiPersonas.Controllers
 						}
 						return PhysicalFile(ruta, "text/html");
 				}
+
 				[HttpGet] // GET /persona 
-				public IActionResult GetAll()
+				public async Task<IActionResult> GetAll()
 				{
-						return Ok(_repository.GetAll());
+						var personas = await _repository.GetAllAsync();
+						return Ok(personas);
 				}
+
 				[HttpGet("{id}")] // GET /persona/{id}
-				public IActionResult GetById(long id)
+				public async Task<IActionResult> GetById(long id)
 				{
-						var persona = _repository.GetById(id);
+						var persona = await _repository.GetByIdAsync(id);
 						if (persona is null)
 						{
 								return NotFound();
 						}
 						return Ok(persona);
 				}
-				[HttpPost] //post /persona/
-				public IActionResult Create([FromBody] Persona persona)
+
+				[HttpPost] // POST /persona
+				public async Task<IActionResult> Create([FromBody] Persona persona)
 				{
-						var (success, id) = _repository.Create(persona);
+						var (success, id) = await _repository.CreateAsync(persona);
 						if (!success)
 						{
 								return BadRequest();
@@ -63,24 +58,27 @@ namespace ApiPersonas.Controllers
 						persona.Id = id;
 						return CreatedAtAction(nameof(GetById), new { id = id }, persona);
 				}
+
 				[HttpPut("{id}")] // PUT /persona/{id}
-				public IActionResult Update(long id, [FromBody] Persona persona)
+				public async Task<IActionResult> Update(long id, [FromBody] Persona persona)
 				{
 						if (id != persona.Id)
 						{
 								return BadRequest();
 						}
-						var result = _repository.Update(persona);
+						var result = await _repository.UpdateAsync(persona);
 						if (!result)
 						{
 								return NotFound();
 						}
 						return NoContent();
 				}
+
 				[HttpDelete("{id}")] // DELETE /persona/{id}
-				public IActionResult Delete(long id)
+				public async Task<IActionResult> Delete(long id)
 				{
-						if (!_repository.DeleteById(id))
+						var result = await _repository.DeleteByIdAsync(id);
+						if (!result)
 						{
 								return NotFound();
 						}

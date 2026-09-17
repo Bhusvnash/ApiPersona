@@ -6,13 +6,12 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IPersonaRepository, MysqlPersonaRepository>();
 builder.Services.AddCors(options =>
 {
-		options.AddPolicy("dev", policity =>
-		{
-				policity.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-		});
+	options.AddPolicy("dev", policity =>
+	{
+		policity.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+	});
 });
 
- 
 // Configure the HTTP request pipeline.
 Console.ForegroundColor = ConsoleColor.White;
 var app = builder.Build();
@@ -34,6 +33,7 @@ app.Use(async (context, next) =>
 				>= 400 => ConsoleColor.Red,
 				_ => ConsoleColor.White
 		};
+
 		Console.WriteLine(
 				$" └[{context.Response.StatusCode}]:: " + $"{context.Request.Method}  {context.Request.Path}	:: " + $"({duracion.TotalMilliseconds:0.0} ms)"
 		);

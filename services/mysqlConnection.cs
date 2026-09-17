@@ -1,5 +1,5 @@
-﻿using MySql.Data.MySqlClient;
-using System.Configuration;
+using MySql.Data.MySqlClient;
+using System.Threading.Tasks;
 
 namespace ApiPersonas.services
 {
@@ -11,8 +11,23 @@ namespace ApiPersonas.services
 				public MysqlConnection()
 				{
 						conn = new MySqlConnection(connectionString);
+				}
 
-						conn.Open();
+				public async Task<MySqlConnection> OpenAsync()
+				{
+						if (conn.State != System.Data.ConnectionState.Open)
+						{
+								await conn.OpenAsync();
+						}
+						return conn;
+				}
+
+				public async Task CloseAsync()
+				{
+						if (conn.State != System.Data.ConnectionState.Closed)
+						{
+								await conn.CloseAsync();
+						}
 				}
 
 				public MySqlConnection GetConnection()

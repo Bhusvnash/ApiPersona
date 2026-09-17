@@ -1,8 +1,10 @@
-﻿using ApiPersonas.Models;
-using ApiPersonas.services;
-using Microsoft.AspNetCore.Routing.Tree;
-using Microsoft.Data.SqlClient;
+using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
+using ApiPersonas.Models;
+using ApiPersonas.services;
 
 namespace ApiPersonas.Repositories
 {
@@ -11,131 +13,140 @@ namespace ApiPersonas.Repositories
 				/// <summary>
 				/// Obtiene todas las personas de la base de datos
 				/// </summary>
-				/// <returns>
-				/// lista de objetos Persona
-				/// </returns>
-				public List<Persona> GetAll()
+				public async Task<List<Persona>> GetAllAsync()
 				{
 						var sqlServer = new sqlServerConnection();
 						var personas = new List<Persona>();
 						try
 						{
-								sqlServer.ConnectionOpen();
-								string query = "select * from personas";
+								await sqlServer.ConnectionOpenAsync();
+								string query = "SELECT id, nombre, telefono FROM personas";
 								using (var cmd = new SqlCommand(query, sqlServer.conn))
 								{
-										var reader = cmd.ExecuteReader();
-										while (reader.Read())
+										using (var reader = await cmd.ExecuteReaderAsync())
 										{
-												personas.Add(new Persona(
-														reader.GetInt64("id"),
-														reader.GetString("nombre"),
-														reader.GetString("telefono")
-												));
+												while (await reader.ReadAsync())
+												{
+														personas.Add(new Persona(
+																reader.GetInt64("id"),
+																reader.GetString("nombre"),
+																reader.GetString("telefono")
+														));
+												}
 										}
 								}
 						}
 						finally
 						{
-								sqlServer.ConnectionClose();
+								await sqlServer.ConnectionCloseAsync();
 						}
 						return personas;
 				}
 
 				/// <summary>
-				/// Obtiene una persona por si ID en la base de datos
+				/// Obtiene una persona por su ID en la base de datos
 				/// </summary>
-				/// <param name="id"></param>
-				/// <returns> Persona where ID or Null</returns>
-				public Persona? GetById(long id)
+				public async Task<Persona?> GetByIdAsync(long id)
 				{
 						Persona? persona = null;
 						var sqlServer = new sqlServerConnection();
 						try
 						{
-								string query = "Select * from personas where id= @id";
+								await sqlServer.ConnectionOpenAsync();
+								string query = "SELECT id, nombre, telefono FROM personas WHERE id = @id";
 								using (var cmd = new SqlCommand(query, sqlServer.conn))
 								{
 										cmd.Parameters.AddWithValue("@id", id);
-
-										var reader = cmd.ExecuteReader();
-										while (reader.Read())
+										using (var reader = await cmd.ExecuteReaderAsync())
 										{
-												persona = new Persona(
-
-														reader.GetInt64("id"),
-														reader.GetString("nombre"),
-														reader.GetString("telefono")
-												);
+												if (await reader.ReadAsync())
+												{
+														persona = new Persona(
+																reader.GetInt64("id"),
+																reader.GetString("nombre"),
+																reader.GetString("telefono")
+														);
+												}
 										}
 								}
 						}
 						finally
 						{
-								sqlServer.ConnectionClose();
+								await sqlServer.ConnectionCloseAsync();
 						}
 						return persona;
 				}
 
 				/// <summary>
-				/// inserta una Persona  en la db
+				/// Inserta una Persona en la db
 				/// </summary>
-				/// <param name="persona"></param>
-				/// <returns>bool segun resultado del insert </returns>
-				public (bool, long) Create(Persona persona)
+				public async Task<(bool, long)> CreateAsync(Persona persona)
 				{
 						var sqlServer = new sqlServerConnection();
 						try
 						{
-								var query = "INSERT INTO personas(nombre, telefono) OUTPUT INSERTED.id VALUES(@nombre, @telefono)";
+								await sqlServer.ConnectionOpenAsync();
+								var query = "INSERT INTO personas (nombre, telefono) OUTPUT INSERTED.id VALUES (@nombre, @telefono)";
 								using (var cmd = new SqlCommand(query, sqlServer.conn))
 								{
 										cmd.Parameters.AddWithValue("@nombre", persona.Nombre);
 										cmd.Parameters.AddWithValue("@telefono", persona.Telefono);
-										var idGenerado = Convert.ToInt64(cmd.ExecuteScalar());
+										var result = await cmd.ExecuteScalarAsync();
+										long idGenerado = result != null ? Convert.ToInt64(result) : 0;
 										return (idGenerado > 0, idGenerado);
 								}
 						}
 						finally
 						{
-								sqlServer.ConnectionClose();
+								await sqlServer.ConnectionCloseAsync();
 						}
 				}
 
-				public bool Update(Persona persona)
+				/// <summary>
+				/// Actualiza una persona en la base de datos
+				/// </summary>
+				public async Task<bool> UpdateAsync(Persona persona)
 				{
 						var sqlServer = new sqlServerConnection();
 						try
 						{
-								string query = "UPDATE personas SET nombre = @nombre , telefono =@telefono  WHERE id = @id;";
+								await sqlServer.ConnectionOpenAsync();
+								string query = "UPDATE personas SET nombre = @nombre, telefono = @telefono WHERE id = @id";
 								using (var cmd = new SqlCommand(query, sqlServer.conn))
 								{
+										cmd.Parameters.AddWithValue("@id", persona.Id);
 										cmd.Parameters.AddWithValue("@nombre", persona.Nombre);
 										cmd.Parameters.AddWithValue("@telefono", persona.Telefono);
-										return cmd.ExecuteNonQuery() > 0;
+										int rowsAffected = await cmd.ExecuteNonQueryAsync();
+										return rowsAffected > 0;
 								}
 						}
 						finally
 						{
-								sqlServer.ConnectionClose();
+								await sqlServer.ConnectionCloseAsync();
 						}
 				}
 
-				public bool DeleteById(long id)
+				/// <summary>
+				/// Elimina una persona por ID
+				/// </summary>
+				public async Task<bool> DeleteByIdAsync(long id)
 				{
 						var sqlServer = new sqlServerConnection();
 						try
 						{
-								var query = "DELETE  personas  where id = @id;";
+								await sqlServer.ConnectionOpenAsync();
+								var query = "DELETE FROM personas WHERE id = @id";
 								using (var cmd = new SqlCommand(query, sqlServer.conn))
 								{
 										cmd.Parameters.AddWithValue("@id", id);
-										return cmd.ExecuteNonQuery() > 0;
+										int rowsAffected = await cmd.ExecuteNonQueryAsync();
+										return rowsAffected > 0;
 								}
 						}
 						finally
 						{
-								sqlServer.ConnectionClose();
+								await sqlServer.ConnectionCloseAsync();
 						}
 				}
 		}

@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="es" data-bs-theme="dark">
+  
   <head>
     <title>API Personas</title>
     <meta charset="utf-8" />
@@ -82,8 +83,11 @@
         </div>
       </div>
     </main>
+
     <footer class="m-5"></footer>
+
     <!-- [modal] -->
+
     <div
       class="modal fade"
       id="personModal"
@@ -103,7 +107,6 @@
             ></button>
           </div>
           <div id="modalBody" class="modal-body">
-              
           </div>
           <div id="modalFooter" class="modal-footer">
             <button
@@ -113,7 +116,7 @@
             >
               Close
             </button>
-            <!-- Nota : Cundo m.show add.btnSave("set-data-roll") donde roll= lo que hace (CRUD) -->
+            <!-- Nota : Cundo m.show add.btnSave("set-data-roll") donde roll= accion de (CRUD) -->
             <button type="button" class="btn btn-primary" id="btnSave">
               Save changes
             </button>
@@ -121,11 +124,12 @@
         </div>
       </div>
     </div>
-    <!--[script]-->
 
+    <!--[script]-->
     <script src="./assets/Js/bootstrap.bundle.min.js"></script>
+    <script src="./assets/Js/crud.js" defer></script>
+    <script src="./assets/Js/doom.js" defer></script>
     <script src="./assets/Js/app.js" defer></script>
     <script src="./assets/Js/eventos.js" defer></script>
-    <script src="./assets/Js/crud.js" defer></script>
   </body>
 </html>
