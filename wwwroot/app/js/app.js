@@ -57,7 +57,7 @@ async function cargarPersonas() {
     tabla.innerHTML = "";
     tabla.appendChild(crearFilaVaciaTabla("Error al cargar los datos desde la API"));
   }
-}
+}ø
 
 /**
  * Renderiza la tabla según la lista de personas proporcionada

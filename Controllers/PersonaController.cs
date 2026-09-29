@@ -4,12 +4,12 @@ using ApiPersonas.Models;
 using ApiPersonas.Repositories;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiPersonas.Controllers
 {
 		[ApiController]
 		[Route("[controller]")]
-		var contenodr = new PersonaController()
 		public class PersonaController : ControllerBase
 		{
 				private readonly IPersonaRepository _repository;
@@ -19,7 +19,9 @@ namespace ApiPersonas.Controllers
 						_repository = repository;
 				}
 
-				[HttpGet("/")] // GET /
+
+				
+				[HttpGet("/index")] // GET /
 				public IActionResult Index()
 				{
 						var ruta = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html");

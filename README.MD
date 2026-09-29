@@ -363,3 +363,16 @@ GO
 - [ ] **Feedback visual y validaciones:**
   - Mensajes de alerta (toasts o alerts de Bootstrap) para operaciones exitosas o errores de red.
   - Validación de campos requeridos (`nombre` obligatorio, formato de `telefono`).
+----
+```
+// login.js
+
+respuesta = fetch("/api/login", credenciales)
+
+if respuesta.ok:
+    jwt = respuesta.jwt
+
+    localStorage.setItem("jwt", jwt)
+
+    window.location = "/index"
+```

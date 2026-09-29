@@ -1,9 +1,10 @@
 using ApiPersonas.Models;
+using ApiPersonas.Repositories;
 using ApiPersonas.services;
 using Microsoft.AspNetCore.Mvc.Routing;
 using MySql.Data.MySqlClient;
 
-namespace ApiPersonas
+namespace ApiPersonas.Repositories
 {
 
 

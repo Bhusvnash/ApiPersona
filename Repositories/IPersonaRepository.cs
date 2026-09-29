@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using ApiPersonas.Models;
 
 
-namespace ApiPersonas
+namespace ApiPersonas.Repositories
 {
 		public interface IPersonaRepository
 		{
