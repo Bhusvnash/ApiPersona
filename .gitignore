@@ -8,6 +8,7 @@
 # ------------------------------------------
 # Carpetas de binarios y objetos generados durante la compilación
 bin/
+publish/
 obj/
 [Bb]in/
 [Oo]bj/

@@ -99,6 +99,7 @@ function crearFilaVaciaTabla(mensaje = "No se encontraron datos") {
 /**
  * Organismo: Formulario para Crear / Editar Persona
  */
+
 function crearFormularioPersona(personaData = { id: "", nombre: "", telefono: "" }) {
   const form = document.createElement("form");
   form.id = "formPersona";

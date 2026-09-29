@@ -1,7 +1,6 @@
-// ==========================================
-// APP - Orquestador Principal
-// Responsabilidad: Gestionar estado, formularios, validación e interactuar con la API
-// ==========================================
+// 
+// APP - Orquestador Principal Gestionar estado, formularios, validación e interactuar con la API
+// 
 
 // --- ESTADO GLOBAL ---
 let listaPersonas = [];
@@ -12,6 +11,7 @@ const inputFilter = document.querySelector("#inputFilter");
 const tabla = document.querySelector("#tabla");
 
 // Objeto de Control del Modal (Bootstrap)
+
 const modal = {
   instance: null,
   element: document.querySelector('#personModal'),
@@ -42,6 +42,7 @@ const modal = {
     if (modal.instance) modal.instance.hide();
   }
 };
+
 
 // --- RENDERIZADO Y CARGA DE DATOS ---
 
@@ -201,6 +202,7 @@ async function procesarActualizarPersona(id) {
 /**
  * Procesa la eliminación de una persona
  */
+
 async function procesarEliminarPersona(id) {
   const confirmacion = confirm(`¿Estás seguro de que deseas eliminar la persona #${id}?`);
   if (!confirmacion) return;

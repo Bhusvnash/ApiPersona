@@ -8,7 +8,7 @@ namespace ApiPersonas.services
 {
     public class sqlServerConnection
     {
-        private static readonly string connectionString = "Server=NOMBRE_SERVIDOR_SOMEE;Database=NOMBRE_BD_SOMEE;User Id=TU_USUARIO_SOMEE;Password=TU_CONTRASEÑA_SOMEE;TrustServerCertificate=True;";
+        private static readonly string connectionString = "";
         public SqlConnection conn;
 
         public sqlServerConnection()
