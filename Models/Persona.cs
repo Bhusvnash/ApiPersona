@@ -7,12 +7,11 @@ namespace ApiPersonas.Models
         public string? Telefono { get; set; }
 
         public Persona() { }
-
         public Persona(long? id, string? nombre, string? telefono)
         {
             this.Id = id;
             this.Nombre = nombre;
             this.Telefono = telefono;
         }
-    }
+       }    
 }

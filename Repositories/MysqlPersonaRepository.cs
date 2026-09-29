@@ -28,7 +28,7 @@ namespace ApiPersonas.Repositories
 										{
 												while (await reader.ReadAsync())
 												{	personas.Add(
-														new Persona(
+														new			(
 															reader.GetInt64(reader.GetOrdinal("id")),
 															reader.GetString(reader.GetOrdinal("nombre")),
 															reader.GetString(reader.GetOrdinal("telefono"))

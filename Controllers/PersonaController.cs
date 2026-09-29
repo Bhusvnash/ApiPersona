@@ -9,6 +9,7 @@ namespace ApiPersonas.Controllers
 {
 		[ApiController]
 		[Route("[controller]")]
+		var contenodr = new PersonaController()
 		public class PersonaController : ControllerBase
 		{
 				private readonly IPersonaRepository _repository;
@@ -28,6 +29,7 @@ namespace ApiPersonas.Controllers
 						}
 						return PhysicalFile(ruta, "text/html");
 				}
+
 
 				[HttpGet] // GET /persona 
 				public async Task<IActionResult> GetAll()
