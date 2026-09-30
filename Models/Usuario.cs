@@ -13,4 +13,5 @@
 				this.Pass = pass;
 			}
 		}
+		public record DtoUsuario(string Nombre, string Pass);
 }

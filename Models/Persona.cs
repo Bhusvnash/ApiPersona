@@ -14,6 +14,5 @@ namespace ApiPersonas.Models
             this.Telefono = telefono;
         }
     }
-		public record DtoLogin(string nombre, string pass);
 
 }

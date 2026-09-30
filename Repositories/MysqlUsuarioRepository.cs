@@ -8,7 +8,7 @@ namespace ApiPersonas.Repositories
 {
 
 
-		internal class MysqlUsuarioRepository : IUsuario
+		internal class MysqlUsuarioRepository : IUsuarioRepository
 		{
 				public async Task<List<Usuario>> GetAllAsync()
 				{
@@ -43,7 +43,7 @@ namespace ApiPersonas.Repositories
 						return usuarios;
 				}
 
-				public async Task<Usuario?> GetByIdAsync(int id)
+				public async Task<Usuario?> GetByIdAsync(long id)
 				{
 						Usuario? user = null;
 						var mysql = new MysqlConnection();
@@ -73,14 +73,15 @@ namespace ApiPersonas.Repositories
 						}
 						return user;
 				}
-				public async Task<bool> CreateAsync(Usuario usuario)
+				public async Task<bool> CreateAsync(DtoUsuario usuario)
 				{
 						var mysql = new MysqlConnection();
-
 						try
 						{
-								await mysql.CloseAsync();
+								await mysql.OpenAsync();
 								var query = "INSERT INTO usuario (nombre,pass) Values (@nombre,@pass)";
+								//hash pass for the user 
+								usuario = new DtoUsuario(usuario.Nombre, Encoder.HashPassword(usuario.Pass));
 								using (var cmd = new MySqlCommand(query, mysql.conn))
 								{
 										cmd.Parameters.AddWithValue("nombre", usuario.Nombre);
@@ -96,11 +97,11 @@ namespace ApiPersonas.Repositories
 				public async Task<bool> UpdateAsync(Usuario usuario)
 				{
 						var mysql = new MysqlConnection();
-						try
+						try 
 						{
-
 								await mysql.OpenAsync();
 								var query = "UPDATE usuario SET nombre = @nombre, pass = @pass WHERE id = @id";
+								usuario.Pass = Encoder.HashPassword(usuario.Pass);
 								using (var cmd = new MySqlCommand(query, mysql.conn))
 								{
 										cmd.Parameters.AddWithValue("@id", usuario.Id);
@@ -114,7 +115,7 @@ namespace ApiPersonas.Repositories
 								await mysql.CloseAsync();
 						}
 				}
-				public async Task<bool> DeleteAsync(int id)
+				public async Task<bool> DeleteAsync(long id)
 				{
 						var mysql = new MysqlConnection();
 						try

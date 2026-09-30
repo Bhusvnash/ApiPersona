@@ -4,7 +4,11 @@ using ApiPersonas.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
+
+//  DI 
 builder.Services.AddScoped<IPersonaRepository,MysqlPersonaRepository>();
+builder.Services.AddScoped<IUsuarioRepository,MysqlUsuarioRepository>();
+
 builder.Services.AddCors(options =>
 {
 	options.AddPolicy("dev", policity =>
@@ -40,6 +44,7 @@ app.Use(async (context, next) =>
 		);
 		Console.ResetColor();
 });
+
 app.UseAuthorization();
 app.MapControllers();
 app.UseStaticFiles();

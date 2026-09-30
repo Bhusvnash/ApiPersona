@@ -5,7 +5,7 @@ using Microsoft.VisualBasic;
 
 namespace ApiPersonas.Repositories
 {
-		public class SqlServerUsuarioRepository : IUsuario
+		public class SqlServerUsuarioRepository : IUsuarioRepository
 		{
 				public async Task<List<Usuario>> GetAllAsync()
 				{
@@ -14,7 +14,7 @@ namespace ApiPersonas.Repositories
 						try
 						{
 								await sqlServer.ConnectionOpenAsync();
-								var query = "SELECT id , nombre , pass FROM usuario ";
+								var query = "SELECT id , nombre , pass FROM usuario";
 								using (var cmd = new SqlCommand(query, sqlServer.conn))
 								{
 										using (var reader = await cmd.ExecuteReaderAsync())
@@ -37,7 +37,7 @@ namespace ApiPersonas.Repositories
 						}
 				}
 
-				public async Task<Usuario?> GetByIdAsync(int id)
+				public async Task<Usuario?> GetByIdAsync(long id)
 				{
 						Usuario? user = null;
 						var sqlServer = new sqlServerConnection();
@@ -68,7 +68,7 @@ namespace ApiPersonas.Repositories
 						}
 				}
 
-				public async Task<bool> CreateAsync(Usuario usuario)
+				public async Task<bool> CreateAsync(DtoUsuario usuario)
 				{
 						var sqlServer = new sqlServerConnection();
 						try
@@ -86,8 +86,7 @@ namespace ApiPersonas.Repositories
 						{
 								await sqlServer.ConnectionCloseAsync();
 						}
-				}
-
+				}			
 				public async Task<bool> UpdateAsync(Usuario usuario)
 				{
 						var sqlServer = new sqlServerConnection();
@@ -109,7 +108,7 @@ namespace ApiPersonas.Repositories
 						}
 				}
 
-				public async Task<bool> DeleteAsync(int id)
+				public async Task<bool> DeleteAsync(long id)
 				{
 						var sqlServer = new sqlServerConnection();
 						try

@@ -32,7 +32,6 @@ namespace ApiPersonas.Controllers
 						return PhysicalFile(ruta, "text/html");
 				}
 
-
 				[HttpGet] // GET /persona 
 				public async Task<IActionResult> GetAll()
 				{
@@ -77,7 +76,6 @@ namespace ApiPersonas.Controllers
 						}
 						return NoContent();
 				}
-
 				[HttpDelete("{id}")] // DELETE /persona/{id}
 				public async Task<IActionResult> Delete(long id)
 				{
