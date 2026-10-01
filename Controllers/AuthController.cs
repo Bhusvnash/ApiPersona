@@ -20,24 +20,10 @@ namespace ApiPersonas.Controllers
 				}
 
 				//mandar login
-				[HttpGet("/login")]
-				public IActionResult MandarLogin()
+				[HttpGet("/")]
+				public IActionResult SendLogin()
 				{
-						var rutaArchivo = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "auth", "login.html");
-						if (!System.IO.File.Exists(rutaArchivo))
-						{
-								return NotFound("El archivo no existe.");
-						}
-						return PhysicalFile(rutaArchivo, "text/html");
+						return Redirect("/auth/login.html");
 				}
-				/*
-				[HttpPost]
-				[Route("/login")]  // POST Auth/login
-				public IActionResult LoginValidate([FromBody] DtoUsuario data)
-				{
-						//valida el pass y usuario;
-						return StatusCode(200, new { nombre = data.Nombre, pass = data.Pass});
-				}
-				*/
 		}
 }

@@ -1,20 +1,19 @@
-using ApiPersonas;
 using ApiPersonas.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-//  DI 
-builder.Services.AddScoped<IPersonaRepository,MysqlPersonaRepository>();
-builder.Services.AddScoped<IUsuarioRepository,MysqlUsuarioRepository>();
+//  DI
+builder.Services.AddScoped<IPersonaRepository, MysqlPersonaRepository>();
+builder.Services.AddScoped<IUsuarioRepository, MysqlUsuarioRepository>();
 
 builder.Services.AddCors(options =>
 {
-	options.AddPolicy("dev", policity =>
-	{
-		policity.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-	});
+		options.AddPolicy("dev", policity =>
+		{
+				policity.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+		});
 });
 
 // Configure the HTTP request pipeline.
@@ -47,6 +46,13 @@ app.Use(async (context, next) =>
 
 app.UseAuthorization();
 app.MapControllers();
-app.UseStaticFiles();
-//app usa async callback (httpContext,next= "ya termine continua con el siguiente middleware")
+app.UseStaticFiles(); app.Use(async (context, next) =>
+{
+		if (context.Request.Path == "/")
+		{
+				context.Response.Redirect("/auth/login.html");
+				return;
+		}
+		await next();
+});
 app.Run();
