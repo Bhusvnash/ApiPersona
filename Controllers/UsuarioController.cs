@@ -1,4 +1,4 @@
-﻿ using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using ApiPersonas.services;
 using Microsoft.AspNetCore.Mvc;
 using ApiPersonas.Repositories;
@@ -20,49 +20,95 @@ namespace ApiPersonas.Controllers
 				[HttpGet] // GET Usuario/
 				public async Task<IActionResult> GetAll()
 				{
-						return Ok(await _usuarioRepository.GetAllAsync());
+						try
+						{
+								return Ok(await _usuarioRepository.GetAllAsync());
+						}
+						catch (Exception ex)
+						{
+								return StatusCode(500, new { Error = "Internal server error", Details = ex.Message });
+						}
 				}
 
 				[HttpGet("{id}")] // GET Usuario/{id}
 				public async Task<IActionResult> GetById(long id)
 				{
-						if (id <= 0) return BadRequest("Bad Request");
-						return Ok(await _usuarioRepository.GetByIdAsync(id));
-				}
-
-
-				
-				[HttpPost] // POST Usuario/   
-				public async Task<IActionResult> Create([FromBody] DtoUsuario data)
-				{
-						if (data is null) return NotFound(new { Error = "data is null" });
-						data = new DtoUsuario(data.Nombre, Encoder.HashPassword(data.Pass));
-						var result = await _usuarioRepository.CreateAsync(data);
-						if (!result.Item1)
+						try
 						{
-								return StatusCode(500,new {Error="cant'n create user" });
+								if (id <= 0) return BadRequest("Bad Request");
+								var result = await _usuarioRepository.GetByIdAsync(id);
+								if (result == null) return NotFound();
+								return Ok(result);
 						}
-						return Created($"/Usuarios/{result.Item2}", new { Id = result.Item2, Nombre = data.Nombre, Pass = data.Pass });
+						catch (Exception ex)
+						{
+								return StatusCode(500, new { Error = "Internal server error", Details = ex.Message });
+						}
 				}
 
-				[HttpPut] // PUT Usuario
-				public async Task<IActionResult> Update([FromBody] Usuario data)
+				[HttpPost] // POST Usuario/   
+				public async Task<IActionResult> Create([FromBody] GetUsuario data)
 				{
-						if (data is null) return BadRequest("Bad Request");
-						data.Pass = Encoder.HashPassword(data.Pass);
-						if (!await _usuarioRepository.UpdateAsync(data)) return StatusCode(400, new { Message = "Error updating user" });
-						return Created($"/Usuarios/{data.Id}", data);
+						try
+						{
+								if (data is null) return BadRequest(new { Error = "data is null" });
+								
+								data = new GetUsuario(data.Nombre, Encoder.HashPassword(data.Pass));
+								var result = await _usuarioRepository.CreateAsync(data);
+								
+								if (!result.Item1)
+								{
+										return StatusCode(500, new { Error = "can't create user" });
+								}
+								
+								return CreatedAtAction(nameof(GetById), new { id = result.Item2 }, new { Id = result.Item2, Nombre = data.Nombre });
+						}
+						catch (Exception ex)
+						{
+								return StatusCode(500, new { Error = "Internal server error", Details = ex.Message });
+						}
+				}
+
+				[HttpPut("{id}")] // PUT Usuario/{id}
+				public async Task<IActionResult> Update(long id, [FromBody] GetUsuario data)
+				{
+						try
+						{
+								if (id <= 0 || data is null) return BadRequest("Bad Request");
+								
+								data = new GetUsuario(data.Nombre, Encoder.HashPassword(data.Pass));
+								
+								if (!await _usuarioRepository.UpdateAsync(id, data)) 
+								{
+										return StatusCode(400, new { Message = "Error updating user or user not found" });
+								}
+								
+								return Ok(new { Message = "User updated successfully" });
+						}
+						catch (Exception ex)
+						{
+								return StatusCode(500, new { Error = "Internal server error", Details = ex.Message });
+						}
 				}
 
 				[HttpDelete("{id}")] // DELETE Usuario/{id}
 				public async Task<IActionResult> Delete(long id)
 				{
-						if (id <= 0) return BadRequest("Bad Request");
-						if (!await _usuarioRepository.DeleteAsync(id))
+						try
 						{
-								return StatusCode(400, new { Message = "Error deleting user" });
+								if (id <= 0) return BadRequest("Bad Request");
+								
+								if (!await _usuarioRepository.DeleteAsync(id))
+								{
+										return StatusCode(400, new { Message = "Error deleting user or user not found" });
+								}
+								
+								return NoContent();
 						}
-						return NoContent();
+						catch (Exception ex)
+						{
+								return StatusCode(500, new { Error = "Internal server error", Details = ex.Message });
+						}
 				}
 		}
 }

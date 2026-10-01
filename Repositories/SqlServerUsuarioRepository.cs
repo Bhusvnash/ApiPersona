@@ -1,4 +1,4 @@
-﻿using ApiPersonas.Models;
+using ApiPersonas.Models;
 using ApiPersonas.services;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
@@ -7,24 +7,23 @@ namespace ApiPersonas.Repositories
 {
 		public class SqlServerUsuarioRepository : IUsuarioRepository
 		{
-				public async Task<List<Usuario>> GetAllAsync()
+				public async Task<List<SendUsuario>> GetAllAsync()
 				{
-						var usuarios = new List<Usuario>();
+						var usuarios = new List<SendUsuario>();
 						var sqlServer = new sqlServerConnection();
 						try
 						{
 								await sqlServer.ConnectionOpenAsync();
-								var query = "SELECT id , nombre , pass FROM usuario";
+								var query = "SELECT id , nombre FROM usuario";
 								using (var cmd = new SqlCommand(query, sqlServer.conn))
 								{
 										using (var reader = await cmd.ExecuteReaderAsync())
 										{
 												while (await reader.ReadAsync())
 												{
-														usuarios.Add(new Usuario(
+														usuarios.Add(new SendUsuario(
 															 reader.GetInt64(reader.GetOrdinal("id")),
-																reader.GetString(reader.GetOrdinal("nombre")),
-																reader.GetString(reader.GetOrdinal("pass"))
+																reader.GetString(reader.GetOrdinal("nombre"))
 														));
 												}
 												return usuarios;
@@ -37,14 +36,14 @@ namespace ApiPersonas.Repositories
 						}
 				}
 
-				public async Task<Usuario?> GetByIdAsync(long id)
+				public async Task<SendUsuario?> GetByIdAsync(long id)
 				{
-						Usuario? user = null;
+						SendUsuario? user = null;
 						var sqlServer = new sqlServerConnection();
 						try
 						{
 								await sqlServer.ConnectionOpenAsync();
-								var query = "SELECT id , nombre , pass FROM usuario WHERE id = @id";
+								var query = "SELECT id , nombre FROM usuario WHERE id = @id";
 								using (var cmd = new SqlCommand(query, sqlServer.conn))
 								{
 										cmd.Parameters.AddWithValue("@id", id);
@@ -52,11 +51,10 @@ namespace ApiPersonas.Repositories
 										{
 												if (await reader.ReadAsync())
 												{
-														user = new Usuario(
+														user = new SendUsuario(
 															 reader.GetInt64(reader.GetOrdinal("id")),
-																reader.GetString(reader.GetOrdinal("nombre")),
-																reader.GetString(reader.GetOrdinal("pass")
-													));
+																reader.GetString(reader.GetOrdinal("nombre"))
+													);
 												}
 												return user;
 										}
@@ -68,7 +66,7 @@ namespace ApiPersonas.Repositories
 						}
 				}
 
-				public async Task<(bool, long?)> CreateAsync(DtoUsuario user)
+				public async Task<(bool, long?)> CreateAsync(GetUsuario user)
 				{
 						var sqlServer = new sqlServerConnection();
 						try
@@ -78,7 +76,7 @@ namespace ApiPersonas.Repositories
 								using (var cmd = new SqlCommand(query, sqlServer.conn))
 								{
 										cmd.Parameters.AddWithValue("@nombre", user.Nombre);
-										cmd.Parameters.AddWithValue("@telefono", user.Pass);
+										cmd.Parameters.AddWithValue("@pass", user.Pass);
 										var result = await cmd.ExecuteScalarAsync();
 										long idGenerado = result != null ? Convert.ToInt64(result) : 0;
 										return (idGenerado > 0, idGenerado);
@@ -90,7 +88,7 @@ namespace ApiPersonas.Repositories
 						}
 				}
 
-				public async Task<bool> UpdateAsync(Usuario usuario)
+				public async Task<bool> UpdateAsync(long id, GetUsuario usuario)
 				{
 						var sqlServer = new sqlServerConnection();
 						try
@@ -99,7 +97,7 @@ namespace ApiPersonas.Repositories
 								var query = "UPDATE usuario SET nombre = @nombre, pass = @pass WHERE id = @id";
 								using (var cmd = new SqlCommand(query, sqlServer.conn))
 								{
-										cmd.Parameters.AddWithValue("@id", usuario.Id);
+										cmd.Parameters.AddWithValue("@id", id);
 										cmd.Parameters.AddWithValue("@nombre", usuario.Nombre);
 										cmd.Parameters.AddWithValue("@pass", usuario.Pass);
 										return await cmd.ExecuteNonQueryAsync() > 0;

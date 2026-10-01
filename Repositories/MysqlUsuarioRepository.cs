@@ -10,14 +10,14 @@ namespace ApiPersonas.Repositories
 
 		internal class MysqlUsuarioRepository : IUsuarioRepository
 		{
-				public async Task<List<Usuario>> GetAllAsync()
+				public async Task<List<SendUsuario>> GetAllAsync()
 				{
-						var usuarios = new List<Usuario>();
+						var usuarios = new List<SendUsuario>();
 						var mysql = new MysqlConnection();
 						try
 						{
 								await mysql.OpenAsync();
-								string query = "SELECT id, nombre, pass FROM usuario";
+								string query = "SELECT id, nombre FROM usuario";
 								using (var cmd = new MySqlCommand(query, mysql.conn))
 								{
 										using (var reader = await cmd.ExecuteReaderAsync())
@@ -25,11 +25,10 @@ namespace ApiPersonas.Repositories
 												while (await reader.ReadAsync())
 												{
 														usuarios.Add(
-																new
+																new SendUsuario
 																(
 																		reader.GetInt64(reader.GetOrdinal("id")),
-																		reader.GetString(reader.GetOrdinal("nombre")),
-																		reader.GetString(reader.GetOrdinal("pass"))
+																		reader.GetString(reader.GetOrdinal("nombre"))
 																)
 														);
 												}
@@ -43,14 +42,14 @@ namespace ApiPersonas.Repositories
 						return usuarios;
 				}
 
-				public async Task<Usuario?> GetByIdAsync(long id)
+				public async Task<SendUsuario?> GetByIdAsync(long id)
 				{
-						Usuario? user = null;
+						SendUsuario? user = null;
 						var mysql = new MysqlConnection();
 						try
 						{
 								await mysql.OpenAsync();
-								var query = "SELECT id , nombre , pass FROM usuario WHERE id = @id";
+								var query = "SELECT id , nombre FROM usuario WHERE id = @id";
 								using (var cmd = new MySqlCommand(query, mysql.conn))
 								{
 										cmd.Parameters.AddWithValue("id", @id);
@@ -58,10 +57,9 @@ namespace ApiPersonas.Repositories
 										{
 												if (await reader.ReadAsync())
 												{
-														user = new Usuario(
+														user = new SendUsuario(
 																reader.GetInt64(reader.GetOrdinal("id")),
-																reader.GetString(reader.GetOrdinal("nombre")),
-																reader.GetString(reader.GetOrdinal("pass"))
+																reader.GetString(reader.GetOrdinal("nombre"))
 														);
 												}
 										}
@@ -74,7 +72,7 @@ namespace ApiPersonas.Repositories
 						return user;
 				}
 
-				public async Task<(bool, long?)> CreateAsync(DtoUsuario user)
+				public async Task<(bool, long?)> CreateAsync(GetUsuario user)
 				{
 						var mysql = new MysqlConnection();
 						try
@@ -84,7 +82,7 @@ namespace ApiPersonas.Repositories
 								using (var cmd = new MySqlCommand(query, mysql.conn))
 								{
 										cmd.Parameters.AddWithValue("@nombre", user.Nombre);
-										cmd.Parameters.AddWithValue("@telefono", user.Pass);
+										cmd.Parameters.AddWithValue("@pass", user.Pass);
 										int rowsAffected = await cmd.ExecuteNonQueryAsync();
 										return (rowsAffected > 0, cmd.LastInsertedId);
 								}
@@ -95,7 +93,7 @@ namespace ApiPersonas.Repositories
 						}
 				}
 
-				public async Task<bool> UpdateAsync(Usuario usuario)
+				public async Task<bool> UpdateAsync(long id, GetUsuario usuario)
 				{
 						var mysql = new MysqlConnection();
 						try 
@@ -104,7 +102,7 @@ namespace ApiPersonas.Repositories
 								var query = "UPDATE usuario SET nombre = @nombre, pass = @pass WHERE id = @id";
 								using (var cmd = new MySqlCommand(query, mysql.conn))
 								{
-										cmd.Parameters.AddWithValue("@id", usuario.Id);
+										cmd.Parameters.AddWithValue("@id", id);
 										cmd.Parameters.AddWithValue("@nombre", usuario.Nombre);
 										cmd.Parameters.AddWithValue("@pass", usuario.Pass);
 										return await cmd.ExecuteNonQueryAsync() > 0;
