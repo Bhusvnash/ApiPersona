@@ -68,25 +68,28 @@ namespace ApiPersonas.Repositories
 						}
 				}
 
-				public async Task<bool> CreateAsync(DtoUsuario usuario)
+				public async Task<(bool, long?)> CreateAsync(DtoUsuario user)
 				{
 						var sqlServer = new sqlServerConnection();
 						try
 						{
 								await sqlServer.ConnectionOpenAsync();
-								var query = "INSERT INTO  usuario(nombre, pass) 	VALUES(@nombre, @pass)";
+								var query = "INSERT INTO usuario (nombre, pass) OUTPUT INSERTED.id VALUES (@nombre, @pass)";
 								using (var cmd = new SqlCommand(query, sqlServer.conn))
 								{
-										cmd.Parameters.AddWithValue("@nombre", usuario.Nombre);
-										cmd.Parameters.AddWithValue("@pass", usuario.Pass);
-										return await cmd.ExecuteNonQueryAsync() > 0;
+										cmd.Parameters.AddWithValue("@nombre", user.Nombre);
+										cmd.Parameters.AddWithValue("@telefono", user.Pass);
+										var result = await cmd.ExecuteScalarAsync();
+										long idGenerado = result != null ? Convert.ToInt64(result) : 0;
+										return (idGenerado > 0, idGenerado);
 								}
 						}
 						finally
 						{
 								await sqlServer.ConnectionCloseAsync();
 						}
-				}			
+				}
+
 				public async Task<bool> UpdateAsync(Usuario usuario)
 				{
 						var sqlServer = new sqlServerConnection();

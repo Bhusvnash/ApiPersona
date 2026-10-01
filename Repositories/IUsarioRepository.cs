@@ -9,7 +9,7 @@ namespace ApiPersonas.Repositories
 				public Task<List<Usuario>> GetAllAsync();
 				public Task<Usuario?> GetByIdAsync(long id);
 
-				public Task<bool> CreateAsync(DtoUsuario usuario);
+				public Task<(bool,long?)> CreateAsync(DtoUsuario usuario);
 				public Task<bool> UpdateAsync(Usuario usuario);
 				public Task<bool> DeleteAsync(long id);
 

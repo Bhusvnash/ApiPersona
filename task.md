@@ -26,6 +26,7 @@
 - [x] `GET  /usuario/{id}`  → `{}`    obtiene usuario por id
 - [x] `POST /usuario`       → `bool`  crea usuario (con hash de pass)
 
+- [X] `DELETE /usuario/{id}` → eliminar usuario
 ### Controller `AuthController`
 - [x] `GET /login` → sirve `wwwroot/auth/login.html`
 
@@ -42,10 +43,8 @@
 ---
 
 ##  Pendiente
-
-### Controller `UsuarioController`
+### Controller `UsuarioController` (`/usuario`)
 - [] `PUT /usuario/{id}`    → editar usuario (con re-hash de pass si cambia)
-- [ ] `DELETE /usuario/{id}` → eliminar usuario
 ### Interface `IUsuarioRepository` — métodos de Auth
 - [ ] `GetByNombreAsync(string nombre)` → `long? id`
 - [ ] `GetPassAsync(long id)` → `string?` (hash almacenado)

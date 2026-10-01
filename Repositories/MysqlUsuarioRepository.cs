@@ -17,7 +17,7 @@ namespace ApiPersonas.Repositories
 						try
 						{
 								await mysql.OpenAsync();
-								string query = "SELECT id, nombre, pass FROM usuarios";
+								string query = "SELECT id, nombre, pass FROM usuario";
 								using (var cmd = new MySqlCommand(query, mysql.conn))
 								{
 										using (var reader = await cmd.ExecuteReaderAsync())
@@ -73,20 +73,20 @@ namespace ApiPersonas.Repositories
 						}
 						return user;
 				}
-				public async Task<bool> CreateAsync(DtoUsuario usuario)
+
+				public async Task<(bool, long?)> CreateAsync(DtoUsuario user)
 				{
 						var mysql = new MysqlConnection();
 						try
 						{
 								await mysql.OpenAsync();
-								var query = "INSERT INTO usuario (nombre,pass) Values (@nombre,@pass)";
-								//hash pass for the user 
-								usuario = new DtoUsuario(usuario.Nombre, Encoder.HashPassword(usuario.Pass));
+								string query = "INSERT INTO usuario (nombre, pass) VALUES (@nombre, @pass)";
 								using (var cmd = new MySqlCommand(query, mysql.conn))
 								{
-										cmd.Parameters.AddWithValue("nombre", usuario.Nombre);
-										cmd.Parameters.AddWithValue("pass", usuario.Pass);
-										return await cmd.ExecuteNonQueryAsync() > 0;
+										cmd.Parameters.AddWithValue("@nombre", user.Nombre);
+										cmd.Parameters.AddWithValue("@telefono", user.Pass);
+										int rowsAffected = await cmd.ExecuteNonQueryAsync();
+										return (rowsAffected > 0, cmd.LastInsertedId);
 								}
 						}
 						finally
@@ -94,6 +94,7 @@ namespace ApiPersonas.Repositories
 								await mysql.CloseAsync();
 						}
 				}
+
 				public async Task<bool> UpdateAsync(Usuario usuario)
 				{
 						var mysql = new MysqlConnection();
@@ -101,7 +102,6 @@ namespace ApiPersonas.Repositories
 						{
 								await mysql.OpenAsync();
 								var query = "UPDATE usuario SET nombre = @nombre, pass = @pass WHERE id = @id";
-								usuario.Pass = Encoder.HashPassword(usuario.Pass);
 								using (var cmd = new MySqlCommand(query, mysql.conn))
 								{
 										cmd.Parameters.AddWithValue("@id", usuario.Id);
