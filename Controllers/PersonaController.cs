@@ -18,9 +18,6 @@ namespace ApiPersonas.Controllers
 				{
 						_repository = repository;
 				}
-
-
-				
 				[HttpGet("/index")] // GET /
 				public IActionResult Index()
 				{

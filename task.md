@@ -1,32 +1,41 @@
 # ApiPersonas — Tareas del Proyecto
-> Última revisión: 2026-09-30
+> Última revisión: 2026-10-01
 
 ---
 
-## ✅ Completado
+##  Completado
+
+### Models
+- [x] Eliminada clase `Usuario` — reemplazada por DTOs
+- [x] `GetUsuario(string Nombre, string Pass)` — record para recibir datos en requests (POST/PUT)
+- [x] `SendUsuario(long Id, string Nombre)` — record para responder en requests (GET), sin exponer la contraseña
 
 ### Interface `IUsuarioRepository`
-- [x] `GetAllAsync()` → `List<Usuario>`
-- [x] `GetByIdAsync(id)` → `Usuario?`
-- [x] `CreateAsync(DtoUsuario)` → `bool`
-- [x] `UpdateAsync(Usuario)` → `bool`
+- [x] `GetAllAsync()` → `List<SendUsuario>`
+- [x] `GetByIdAsync(id)` → `SendUsuario?`
+- [x] `CreateAsync(GetUsuario)` → `(bool, long?)`
+- [x] `UpdateAsync(long id, GetUsuario)` → `bool`
 - [x] `DeleteAsync(id)` → `bool`
 
 ### Repositorios (MySQL + SqlServer)
 - [x] `MysqlUsuarioRepository` — implementa todos los métodos de `IUsuarioRepository`
 - [x] `SqlServerUsuarioRepository` — implementa todos los métodos de `IUsuarioRepository`
-- [x] Hashing de contraseña en `CreateAsync` con `Encoder.HashPassword()` *(solo MySQL por ahora)*
+- [x] Hashing de contraseña en `CreateAsync` con `Encoder.HashPassword()` *(MySQL y SqlServer)*
+- [x] **Bug fix:** `AddWithValue("@telefono", ...)` corregido a `AddWithValue("@pass", ...)` en ambos repositorios
+- [x] **Bug fix:** `UpdateAsync` en `SqlServerUsuarioRepository` — parámetro `@id` correctamente agregado
 
 ### Service `Encoder`
 - [x] `HashPassword(string password)` → `string` (BCrypt)
 - [x] `VerifyPassword(string password, string hash)` → `bool` (BCrypt)
 
 ### Controller `UsuarioController` (`/usuario`)
-- [x] `GET  /usuario`       → `[{}]`  lista todos los usuarios
-- [x] `GET  /usuario/{id}`  → `{}`    obtiene usuario por id
-- [x] `POST /usuario`       → `bool`  crea usuario (con hash de pass)
+- [x] `GET    /usuario`       → `[{}]`  lista todos los usuarios (retorna `SendUsuario[]`)
+- [x] `GET    /usuario/{id}`  → `{}`    obtiene usuario por id (retorna `SendUsuario`)
+- [x] `POST   /usuario`       → crea usuario — recibe `GetUsuario`, hashea pass, retorna `SendUsuario`
+- [x] `PUT    /usuario/{id}`  → edita usuario — recibe `GetUsuario`, hashea pass
+- [x] `DELETE /usuario/{id}`  → elimina usuario
+- [x] Try-catch en todos los endpoints con respuestas HTTP apropiadas (`400`, `404`, `500`)
 
-- [X] `DELETE /usuario/{id}` → eliminar usuario
 ### Controller `AuthController`
 - [x] `GET /login` → sirve `wwwroot/auth/login.html`
 
@@ -43,8 +52,7 @@
 ---
 
 ##  Pendiente
-### Controller `UsuarioController` (`/usuario`)
-- [] `PUT /usuario/{id}`    → editar usuario (con re-hash de pass si cambia)
+
 ### Interface `IUsuarioRepository` — métodos de Auth
 - [ ] `GetByNombreAsync(string nombre)` → `long? id`
 - [ ] `GetPassAsync(long id)` → `string?` (hash almacenado)
@@ -54,12 +62,11 @@
 - [ ] Implementar `GetByNombreAsync` en `SqlServerUsuarioRepository`
 - [ ] Implementar `GetPassAsync` en `MysqlUsuarioRepository`
 - [ ] Implementar `GetPassAsync` en `SqlServerUsuarioRepository`
-- [ ] `SqlServerUsuarioRepository.CreateAsync` — agregar hash de contraseña
 
 ### Auth — lógica de login
 - [ ] Corregir `AuthController` para inyectar `IUsuarioRepository` (actualmente usa `IPersonaRepository`)
 - [ ] Validar credenciales con `Encoder.VerifyPassword()`
-- [ ] `POST /auth/login` → recibe `{ nombre, pass }`, retorna JWT token
+- [ ] `POST /auth/login` → recibe `GetUsuario { nombre, pass }`, retorna JWT token
 - [ ] Instalar paquete `Microsoft.AspNetCore.Authentication.JwtBearer`
 - [ ] Generar y retornar JWT tras login exitoso
 
@@ -73,15 +80,22 @@
 
 ---
 
-## ⚠️ Bugs / Inconsistencias detectadas
+##  Bugs Resueltos
 
-| # | Archivo | Línea | Problema |
-|---|---------|-------|---------|
-| 1 | `MysqlUsuarioRepository.cs` | L20 | Query usa tabla `usuarios` (plural); el resto usa `usuario` (singular) — verificar nombre real en BD |
-| 2 | `MysqlUsuarioRepository.cs` | L56 | `AddWithValue("id", @id)` — falta el `@` en el nombre del parámetro, debe ser `"@id"` |
-| 3 | `SqlServerUsuarioRepository.cs` | L100-103 | `UpdateAsync` no agrega el parámetro `@id`, la query fallaría en runtime |
-| 4 | `AuthController.cs` | L15-20 | Inyecta `IPersonaRepository` en lugar de `IUsuarioRepository` para el login |
-| 5 | `SqlServerUsuarioRepository.cs` | L71-89 | `CreateAsync` no hashea la contraseña (inconsistente con MySQL) |
+| # | Archivo | Problema | Estado |
+|---|---------|----------|--------|
+| 1 | `MysqlUsuarioRepository.cs` | `AddWithValue("@telefono", ...)` en `CreateAsync` — parámetro SQL incorrecto |  Corregido |
+| 2 | `SqlServerUsuarioRepository.cs` | `AddWithValue("@telefono", ...)` en `CreateAsync` — parámetro SQL incorrecto |  Corregido |
+| 3 | `SqlServerUsuarioRepository.cs` | `UpdateAsync` no enviaba parámetro `@id` en la query |  Corregido |
+| 4 | `UsuarioController.cs` | `CreatedAtAction` con sintaxis rota `new { Id= }` |  Corregido |
+| 5 | `UsuarioController.cs` | `PUT` no recibía `id` como argumento de ruta |  Corregido |
+| 6 | `SqlServerUsuarioRepository.cs` | `CreateAsync` no hasheaba la contraseña (inconsistente con MySQL) |  Corregido |
+
+##  Bugs Pendientes
+
+| # | Archivo | Problema |
+|---|---------|----------|
+| 1 | `AuthController.cs` | Inyecta `IPersonaRepository` en lugar de `IUsuarioRepository` para el login |
 
 ---
 
@@ -89,14 +103,16 @@
 
 | Paso | Tarea | Bloque |
 |:----:|-------|--------|
-| X | Corregir bugs de parámetros SQL (`@id`) en repositorios | Repositorios |
-| 2 | Agregar `GetByNombreAsync` y `GetPassAsync` a `IUsuarioRepository` | Interface |
-| 3 | Implementar los nuevos métodos en MySQL y SqlServer | Repositorios |
-| 4 | Agregar `PUT /usuario/{id}` y `DELETE /usuario/{id}` al controller | Controller |
-| 5 | Corregir `AuthController` para inyectar `IUsuarioRepository` | Auth |
-| 6 | Implementar validación de credenciales con `Encoder.VerifyPassword` | Auth |
-| 7 | Instalar paquete JWT y configurar en `Program.cs` | Auth |
-| 8 | Implementar generación y retorno de JWT en `POST /auth/login` | Auth |
-| 9 | Crear página de login en `wwwroot/auth/login.html` | Front |
-| 10 | Crear página de app en `wwwroot/app/` | Front |
-    
+| X | Corregir bugs de parámetros SQL en repositorios | Repositorios |
+| X | Implementar DTOs `GetUsuario` / `SendUsuario` | Models |
+| X | Actualizar `IUsuarioRepository` y repositorios para los nuevos DTOs | Interface + Repos |
+| X | Agregar `PUT /usuario/{id}` y `DELETE /usuario/{id}` al controller | Controller |
+| X | Agregar try-catch en todos los endpoints | Controller |
+| 1 | Agregar `GetByNombreAsync` y `GetPassAsync` a `IUsuarioRepository` | Interface |
+| 2 | Implementar los nuevos métodos en MySQL y SqlServer | Repositorios |
+| 3 | Corregir `AuthController` para inyectar `IUsuarioRepository` | Auth |
+| 4 | Implementar validación de credenciales con `Encoder.VerifyPassword` | Auth |
+| 5 | Instalar paquete JWT y configurar en `Program.cs` | Auth |
+| 6 | Implementar generación y retorno de JWT en `POST /auth/login` | Auth |
+| 7 | Crear página de login en `wwwroot/auth/login.html` | Front |
+| 8 | Crear página de app en `wwwroot/app/` | Front |
