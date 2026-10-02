@@ -1,13 +1,9 @@
 using ApiPersonas.Models;
-using ApiPersonas.Repositories;
 using ApiPersonas.services;
-using Microsoft.AspNetCore.Mvc.Routing;
 using MySql.Data.MySqlClient;
 
 namespace ApiPersonas.Repositories
 {
-
-
 		internal class MysqlUsuarioRepository : IUsuarioRepository
 		{
 				public async Task<List<SendUsuario>> GetAllAsync()
@@ -96,7 +92,7 @@ namespace ApiPersonas.Repositories
 				public async Task<bool> UpdateAsync(long id, GetUsuario usuario)
 				{
 						var mysql = new MysqlConnection();
-						try 
+						try
 						{
 								await mysql.OpenAsync();
 								var query = "UPDATE usuario SET nombre = @nombre, pass = @pass WHERE id = @id";
@@ -113,18 +109,38 @@ namespace ApiPersonas.Repositories
 								await mysql.CloseAsync();
 						}
 				}
+
 				public async Task<bool> DeleteAsync(long id)
 				{
 						var mysql = new MysqlConnection();
 						try
 						{
-							await mysql.OpenAsync();
+								await mysql.OpenAsync();
 
 								var query = "DELETE FROM usuario WHERE id = @id";
 								using (var cmd = new MySqlCommand(query, mysql.conn))
 								{
 										cmd.Parameters.AddWithValue("@id", id);
 										return await cmd.ExecuteNonQueryAsync() > 0;
+								}
+						}
+						finally
+						{
+								await mysql.CloseAsync();
+						}
+				}
+
+				public async Task<long?> GetByNombreAsync(string nombre)
+				{
+						MysqlConnection mysql = new();
+						try
+						{
+								await mysql.OpenAsync();
+								var query = "SELECT id FROM usuario WHERE nombre = @nombre";
+								using (var cmd = new MySqlCommand(query, mysql.conn))
+								{
+										cmd.Parameters.AddWithValue("@id", nombre);
+										return Convert.ToInt64(await cmd.ExecuteScalarAsync());
 								}
 						}
 						finally

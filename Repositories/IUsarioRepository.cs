@@ -12,5 +12,8 @@ namespace ApiPersonas.Repositories
 				public Task<(bool,long?)> CreateAsync(GetUsuario usuario);
 				public Task<bool> UpdateAsync(long id, GetUsuario usuario);
 				public Task<bool> DeleteAsync(long id);
+
+				//for login 
+				public Task<long?> GetByNombreAsync(string nombre);	
 		}
 }

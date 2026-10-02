@@ -2,6 +2,7 @@ using ApiPersonas.Models;
 using ApiPersonas.services;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualBasic;
+using Org.BouncyCastle.Crypto.Operators;
 
 namespace ApiPersonas.Repositories
 {
@@ -120,6 +121,25 @@ namespace ApiPersonas.Repositories
 								{
 										cmd.Parameters.AddWithValue("@id", id);
 										return await cmd.ExecuteNonQueryAsync() > 0;
+								}
+						}
+						finally
+						{
+								await sqlServer.ConnectionCloseAsync();
+						}
+				}
+
+				public async Task<long?> GetByNombreAsync(string nombre)
+				{
+						sqlServerConnection sqlServer = new();
+						try
+						{
+								await sqlServer.ConnectionOpenAsync();
+								string query = "SELECT id FROM usuario WHERE nombre = @nombre";
+								using (var cmd = new SqlCommand(query, sqlServer.conn))
+								{
+										cmd.Parameters.AddWithValue("@nombre", nombre);
+										return Convert.ToInt64(await cmd.ExecuteScalarAsync());
 								}
 						}
 						finally
