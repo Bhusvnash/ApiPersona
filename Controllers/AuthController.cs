@@ -10,7 +10,7 @@ namespace ApiPersonas.Controllers
 		[ApiController]
 		public class AuthController : ControllerBase
 		{
-				//clase para procesar un login
+				
 
 				public IPersonaRepository _repositories;
 

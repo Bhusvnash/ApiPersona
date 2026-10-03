@@ -1,6 +1,7 @@
 using ApiPersonas.Models;
 using ApiPersonas.services;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI;
 
 namespace ApiPersonas.Repositories
 {
@@ -141,6 +142,25 @@ namespace ApiPersonas.Repositories
 								{
 										cmd.Parameters.AddWithValue("@id", nombre);
 										return Convert.ToInt64(await cmd.ExecuteScalarAsync());
+								}
+						}
+						finally
+						{
+								await mysql.CloseAsync();
+						}
+				}
+
+				public async Task<string> GetPassAsync(long id)
+				{
+						MysqlConnection mysql = new();
+						try
+						{
+								await mysql.OpenAsync();
+								var query = "SELECT pass FROM usuario WHERE id = @id";
+								using (var cmd = new MySqlCommand(query, mysql.conn))
+								{
+										cmd.Parameters.AddWithValue("@id", id);
+										return Convert.ToString(await cmd.ExecuteScalarAsync()) ?? "";
 								}
 						}
 						finally

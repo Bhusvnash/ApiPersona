@@ -112,7 +112,7 @@ namespace ApiPersonas.Repositories
 
 				public async Task<bool> DeleteAsync(long id)
 				{
-						var sqlServer = new sqlServerConnection();
+						sqlServerConnection sqlServer = new();
 						try
 						{
 								await sqlServer.ConnectionOpenAsync();
@@ -147,5 +147,25 @@ namespace ApiPersonas.Repositories
 								await sqlServer.ConnectionCloseAsync();
 						}
 				}
+
+				public async Task<string> GetPassAsync(long id)
+				{
+					SqlServerConnection sqlServer = new();
+					try
+					{
+						await sqlServer.ConnectionOpenAsync();
+						string query = "SELECT pass FROM usuario WHERE id = @id";
+						using (var cmd = new SqlCommand(query, sqlServer.conn))
+								{
+										cmd.Parameters.AddWithValue("@id", id);
+										return Convert.ToString(await cmd.ExecuteScalarAsync())??"";
+								}
+						}
+						finally
+						{
+								await sqlServer.ConnectionCloseAsync();
+						}
+				}
+
 		}
 }

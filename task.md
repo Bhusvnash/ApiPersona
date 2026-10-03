@@ -16,6 +16,8 @@
 - [x] `CreateAsync(GetUsuario)` → `(bool, long?)`
 - [x] `UpdateAsync(long id, GetUsuario)` → `bool`
 - [x] `DeleteAsync(id)` → `bool`
+- [X] `GetByNombreAsync(string nombre)` → `long? id`
+- [x] `GetPassAsync(long id)` → `string?` (hash almacenado)
 
 ### Repositorios (MySQL + SqlServer)
 - [x] `MysqlUsuarioRepository` — implementa todos los métodos de `IUsuarioRepository`
@@ -23,6 +25,8 @@
 - [x] Hashing de contraseña en `CreateAsync` con `Encoder.HashPassword()` *(MySQL y SqlServer)*
 - [x] **Bug fix:** `AddWithValue("@telefono", ...)` corregido a `AddWithValue("@pass", ...)` en ambos repositorios
 - [x] **Bug fix:** `UpdateAsync` en `SqlServerUsuarioRepository` — parámetro `@id` correctamente agregado
+- [x] Implementa  `GetByNombreAsync` en ambos repositorios
+- [x] Implementar `GetPassAsync` en ambos repositorios
 
 ### Service `Encoder`
 - [x] `HashPassword(string password)` → `string` (BCrypt)
@@ -52,16 +56,6 @@
 ---
 
 ##  Pendiente
-
-### Interface `IUsuarioRepository` — métodos de Auth
-- [ ] `GetByNombreAsync(string nombre)` → `long? id`
-- [ ] `GetPassAsync(long id)` → `string?` (hash almacenado)
-
-### Repositorios — nuevos métodos
-- [ ] Implementar `GetByNombreAsync` en `MysqlUsuarioRepository`
-- [ ] Implementar `GetByNombreAsync` en `SqlServerUsuarioRepository`
-- [ ] Implementar `GetPassAsync` en `MysqlUsuarioRepository`
-- [ ] Implementar `GetPassAsync` en `SqlServerUsuarioRepository`
 
 ### Auth — lógica de login
 - [ ] Corregir `AuthController` para inyectar `IUsuarioRepository` (actualmente usa `IPersonaRepository`)
@@ -108,7 +102,7 @@
 | X | Actualizar `IUsuarioRepository` y repositorios para los nuevos DTOs | Interface + Repos |
 | X | Agregar `PUT /usuario/{id}` y `DELETE /usuario/{id}` al controller | Controller |
 | X | Agregar try-catch en todos los endpoints | Controller |
-| 1 | Agregar `GetByNombreAsync` y `GetPassAsync` a `IUsuarioRepository` | Interface |
+| X | Agregar `GetByNombreAsync` y `GetPassAsync` a `IUsuarioRepository` | Interface |
 | 2 | Implementar los nuevos métodos en MySQL y SqlServer | Repositorios |
 | 3 | Corregir `AuthController` para inyectar `IUsuarioRepository` | Auth |
 | 4 | Implementar validación de credenciales con `Encoder.VerifyPassword` | Auth |
