@@ -150,7 +150,7 @@ namespace ApiPersonas.Repositories
 
 				public async Task<string> GetPassAsync(long id)
 				{
-					SqlServerConnection sqlServer = new();
+					sqlServerConnection sqlServer = new();
 					try
 					{
 						await sqlServer.ConnectionOpenAsync();

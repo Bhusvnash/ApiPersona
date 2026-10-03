@@ -16,7 +16,5 @@ namespace ApiPersonas.Repositories
 				//for login 
 				public Task<long?> GetByNombreAsync(string nombre);
 				public Task<string> GetPassAsync(long id);
-
-
 		}
 }
